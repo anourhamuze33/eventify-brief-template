@@ -125,83 +125,70 @@ const btne = btn.currentTarget;
 btn.parentElement.remove();
 };
 
-
-
-
-
-
-
-
-const total_event = document.getElementById("stat-total-events");
-
-
-
-
-
-// input validation
+// input validation variables selection
 const formulaire = document.querySelector(".form");
 const inputs_4 = document.querySelectorAll("[data-valide]");
-let conteur = 0;
+//input variables selection
 let event_title = document.querySelector("#event-title");
 let event_image = document.querySelector("#event-image");
 let event_description = document.querySelector("#event-description");
 let event_seats = document.querySelector("#event-seats");
 let event_price = document.querySelector("#event-price");
-
-
+//conteur por les id des evenements
+let conteur = 0;
+// la fonction validation du formulaire
 function validation_of_form(){
-formulaire.addEventListener("submit", (e) => {
-  e.preventDefault();
-  // variables
-  let valide = true;
-  // we can do it outside is ze add else--> valide = true   just to reset the value!!!!!!
-  const event_image_regex = /https?:\/\/(?:www\.)?[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+?\.(?:png|jpe?g|gif|webp|svg|)(?:\?.*)?/
-  const event_title_regex = /^[A-Za-z0-9À-ÿ ,.'!?-]{3,50}$/
-  const event_description_regex = /^[A-Za-z0-9À-ÿ ,.'!?()\n\r-]{10,500}$/
-
-
-  const form_errors = document.getElementById("form-errors");
-  const form_success = document.getElementById("form-success");
-  const form_infos = document.getElementById("form-infos");
-
-
-  for (input of inputs_4) {
-    if (input.value.trim() == "") {
+  formulaire.addEventListener("submit", (e) => {
+    e.preventDefault();
+    // variable poure la sortie du fonction si l'input est inconvenable.
+    let valide = true;
+    // we can do it outside is ze add else--> valide = true   !!!!!!just to reset the value!!!!!!
+    // regex of validation form
+    const event_image_regex = /^(https?:\/\/(?:www\.)?[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+?\.(?:png|jpe?g|gif|webp|svg))(?:\?.*)?$/;
+    const event_title_regex = /^[A-Za-z0-9À-ÿ ,.'!?-]{3,50}$/
+    const event_description_regex = /^[A-Za-z0-9À-ÿ ,.'!?()\n\r-]{10,500}$/
+  //selection des eroor divs
+    const form_errors = document.getElementById("form-errors");
+    const form_success = document.getElementById("form-success");
+    const form_infos = document.getElementById("form-infos");
+    //ensure that the input isn't empty
+    for (input of inputs_4){
+      if (input.value.trim() == "") {
+        valide = false;
+        input.value = "";
+        form_infos.classList.remove("is-hidden");
+      };
+    };
+    // valide =
+    //   event_image_regex.test(event_image.value) && event_title_regex.test(event_title.value) && event_description_regex.test(event_description.value);
+    // if (!valide) {
+    //   form_errors.classList.remove("is-hidden");
+    // }
+    //condition of regex
+    if (!event_image_regex.test(event_image.value) || !event_title_regex.test(event_title.value) || !event_description_regex.test(event_description.value)) {
       valide = false;
-      input.value = "";
-      form_infos.classList.remove("is-hidden");
-
     }
-  }
-  // valide =
-  //   event_image_regex.test(event_image.value) && event_title_regex.test(event_title.value) && event_description_regex.test(event_description.value);
-  // if (!valide) {
-  //   form_errors.classList.remove("is-hidden");
-  // }
+    //info validate=false if won't work
+    if(!valide){
+          form_errors.classList.remove("is-hidden")
+    }
+    //info validate=false if will work and calll affichage function.
+    if (valide) {
+      conteur++;
+      form_errors.classList.add("is-hidden");
+      form_infos.classList.add("is-hidden");
+      form_success.classList.remove("is-hidden");
+      total_event.innerText = conteur;
+      affichage(conteur, event_title.value, event_seats.value, event_price.value, cont);                                                                        // 0
+      variants_list.innerHTML = "";
 
-  if (!event_image_regex.test(event_image.value) || !event_title_regex.test(event_title.value) || !event_description_regex.test(event_description.value)) {
-    valide = false;
-  }
-  if(!valide){
-        form_errors.classList.remove("is-hidden");
-
-  }
-
-  if (valide) {
-    form_errors.classList.add("is-hidden");
-    form_infos.classList.add("is-hidden");
-
-    form_success.classList.remove("is-hidden");
-    conteur++;
-    total_event.innerText = conteur;
-    affichage(conteur, event_title.value, event_seats.value, event_price.value, cont);
-                                                                                   // 0
-    variants_list.innerHTML = "";
-    form_success.classList.add("is-hidden");
-  }
-});
-
+      setTimeout(()=>{
+        form_success.classList.add("is-hidden");
+      },5000);
+    }
+  });
 }
+//call function of validation
 validation_of_form();
 
 
@@ -210,7 +197,7 @@ validation_of_form();
  const event_rows = document.querySelectorAll(".table__body");
 
 function affichage(id, title, seats, price, badge) {
-                                                 //table_id
+ //table_id
   const event_info = document.createElement("tr");
  
 
@@ -247,7 +234,7 @@ function affichage(id, title, seats, price, badge) {
 
 }
 
- 
+ const total_event = document.getElementById("stat-total-events");
 // detail[1].addEventListener("click", (e)=>{
 // event_modal.classList.remove("is-hidden");
 // })
@@ -356,8 +343,8 @@ function editEvent(eventId) {
     editingEventId = eventId;
 }
 
-
-function validation_of_form() {
+validation_of_form_edit();
+function validation_of_form_edit() {
     formulaire.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -374,7 +361,7 @@ function validation_of_form() {
             if (input.value.trim() === "") {
                 valide = false;
                 input.value = "";
-                form_infos.classList.remove("is-hidden");
+                // form_infos.classList.remove("is-hidden");
             }
         }
 
@@ -385,14 +372,14 @@ function validation_of_form() {
         }
 
         if (!valide) {
-            form_errors.classList.remove("is-hidden");
+            // form_errors.classList.remove("is-hidden");
             return;
         }
 
         
         form_errors.classList.add("is-hidden");
         form_infos.classList.add("is-hidden");
-        form_success.classList.remove("is-hidden");
+        // form_success.classList.remove("is-hidden");
 
         if (editingEventId !== 0) {
             
@@ -429,7 +416,6 @@ function validation_of_form() {
         }
 
         variants_list.innerHTML = "";
-        form_success.classList.add("is-hidden");
         formulaire.reset();
         renderStats();
     });
