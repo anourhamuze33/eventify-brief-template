@@ -1,27 +1,26 @@
+// variables: selection of screens, bottons, page title and subtitle.
 const navigation_btns = document.querySelectorAll(".sidebar__btn");
 const screens = document.querySelectorAll(".screen");
 let page_title = document.getElementById("page-title");
 let page_subtitle = document.getElementById("page-subtitle");
+// objet pour faciliter le switch des screen en utulusons lindex.
 const screensKeyObj = {
   add: 1,
   stats: 0,
   list: 2,
   archive: 3
 }
-
+// la fonction switch_screens qui nous permet de naviger entre les screens
 function switch_creens(index) {
   navigation_btns.forEach(btn => btn.classList.remove("is-active"));
   screens.forEach(screen => {
     screen.classList.remove("is-visible");
     screen.classList.add("screen");
   });
-
   navigation_btns[index].classList.add("is-active");
   screens[index].classList.add("is-visible");
 }
-
-
-
+//fonction appli qui change le titre selon le key qui est la valeur de data-screen
 function appli(key) {
   const index = screensKeyObj[key];
   if(index == 1){
@@ -42,13 +41,17 @@ function appli(key) {
   }
   switch_creens(index);
   };
-
+//event listner to send la valeur de data screen to the  function appli to be the key
 navigation_btns.forEach((btn) => {
-  btn.addEventListener("click", (event) => {
+  btn.addEventListener("click", () => {
     appli(btn.dataset.screen);
   });
 });
 //
+
+
+
+
 const total_event = document.getElementById("stat-total-events");
 
 
@@ -455,7 +458,7 @@ function   archiveEvent(eventId){
     return;
   }          
   archive.push(event);
-  const row = document.querySelector(`[data-event-id="${eventId}"]`);
+  const row = document.querySelector('[data-event-id="${eventId}"]');
   row.remove();
   renderArchiveTable();
 }
@@ -490,11 +493,11 @@ event_rows[1].innerHTML = "";
 function restoreEvent(eventId) {
   const event = archive.find(ev => ev.id === eventId);
   if (!event) {
-    alert("Event not found");
+    alert("event not found");
     return;
   }
   events.push(event);
-  const row = document.querySelector(`[data-event-id="${eventId}"]`);
+  const row = document.querySelector('[data-event-id="${eventId}"]');
   row.remove();
 
   affichage(event.id, event.name, event.seats, event.price, 0);
