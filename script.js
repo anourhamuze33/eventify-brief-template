@@ -14,7 +14,7 @@ const screensKeyObj = {
   archive: 3
 }
 // la fonction switch_screens qui nous permet de naviger entre les screens
-function switch_creens(index) {
+function switch_screens(index) {
   navigation_btns.forEach(btn => btn.classList.remove("is-active"));
   screens.forEach(screen => {
     screen.classList.remove("is-visible");
@@ -42,7 +42,7 @@ function appli(key) {
     page_title.innerText="Corbaille";
     page_subtitle.innerText="Archive des evenement suprimmee";
   }
-  switch_creens(index);
+  switch_screens(index);
   };
 //event listner to send la valeur de data screen to the  function appli to be the key
 navigation_btns.forEach((btn) => {
@@ -239,9 +239,6 @@ function renderStats(seats, price) {
     document.getElementById('stat-total-seats').textContent = totalSeats;
     document.getElementById('stat-total-price').textContent = '$' + totalPrice.toFixed(2);
 }
-
-
-
 // document.querySelectorAll(".action-btn").forEach(btn => {
 //     btn.addEventListener("click", finctions)
 // });
@@ -272,7 +269,7 @@ switch(action){
   break;
 };
 }
-
+// la fonction affichage des infos concernant chaque event
 function showDetails(eventId) {
         const event = events.find(ev => ev.id === eventId);
         if (!event) {
@@ -285,24 +282,15 @@ function showDetails(eventId) {
         <p><span class="modal__title">description:</span> ${event.description}</p>
         <p><span class="modal__title">seats:</span> ${event.seats}</p>
         <p><span class="modal__title">price:</span> ${event.price}</p>
-
     `;
     document.getElementById("event-modal").classList.remove("is-hidden");
+    const close = document.querySelector(".modal__close");
+    close.addEventListener("click", ()=>{
+       document.getElementById("event-modal").classList.add("is-hidden");
+    });
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-let editingEventId = 0;
+let edit_id = 0;
 
 function editEvent(eventId) {
     const event = events.find(ev => ev.id === eventId);
@@ -323,7 +311,7 @@ function editEvent(eventId) {
     document.getElementById("submit_btn").innerText = "Update Event";
 
   
-    editingEventId = eventId;
+    edit_id = eventId;
 }
 
 validation_of_form_edit();
@@ -360,13 +348,13 @@ function validation_of_form_edit() {
         }
 
         
-        form_errors.classList.add("is-hidden");
-        form_infos.classList.add("is-hidden");
+        // form_errors.classList.add("is-hidden");
+        // form_infos.classList.add("is-hidden");
         // form_success.classList.remove("is-hidden");
 
-        if (editingEventId !== 0) {
+        if (edit_id !== 0) {
             
-            const event = events.find(ev => ev.id === editingEventId);
+            const event = events.find(ev => ev.id === edit_id);
             event.name = event_title.value;
             event.img = event_image.value;
             event.description = event_description.value;
@@ -374,21 +362,21 @@ function validation_of_form_edit() {
             event.price = parseInt(event_price.value);
 
             
-            const row = document.querySelector(`[data-event-id="${editingEventId}"]`);
+            const row = document.querySelector(`[data-event-id="${edit_id}"]`);
             row.innerHTML = `
-                <td>${editingEventId}</td>
+                <td>${edit_id}</td>
                 <td>${event.name}</td>
                 <td>${event.seats}</td>
                 <td>${event.price}$</td>
                 <td><span class="badge">${cont}</span></td>
                 <td>
-                    <button class="btn btn--small" data-action="details" data-event-id="${editingEventId}">Details</button>
-                    <button class="btn btn--small" data-action="edit" data-event-id="${editingEventId}">Edit</button>
-                    <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${editingEventId}">Delete</button>
+                    <button class="btn btn--small" data-action="details" data-event-id="${edit_id}">Details</button>
+                    <button class="btn btn--small" data-action="edit" data-event-id="${edit_id}">Edit</button>
+                    <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${edit_id}">Delete</button>
                 </td>
             `;
 
-            editingEventId = 0;
+            edit_id = 0;
             document.getElementById("submit_btn").innerText = "Create Event";
         } 
         else {
@@ -414,7 +402,7 @@ function   archiveEvent(eventId){
     return;
   }          
   archive.push(event);
-  const row = document.querySelector('[data-event-id="${eventId}"]');
+  const row = document.querySelector(`[data-event-id="${eventId}"]`);
   row.remove();
   renderArchiveTable();
 }
