@@ -1,3 +1,6 @@
+//les array qui contient les evenements et les archives
+let events = [];
+let archive = [];
 // variables: selection of screens, bottons, page title and subtitle.
 const navigation_btns = document.querySelectorAll(".sidebar__btn");
 const screens = document.querySelectorAll(".screen");
@@ -47,23 +50,9 @@ navigation_btns.forEach((btn) => {
     appli(btn.dataset.screen);
   });
 });
-//
+//une autre ,ethode pour ajouter un variant have to be fixed
 
-
-
-
-const total_event = document.getElementById("stat-total-events");
-
-
-
-
-
-
-
-
-
-
-// // add variant
+// add variant
 // const inputs = document.querySelectorAll(".input");
 // let cont = 0;
 // const variants_element = document.createElement("div");
@@ -97,15 +86,12 @@ const total_event = document.getElementById("stat-total-events");
 //   });
 //   ;
 // }
-// add_variant();
 
-let events = [];
-let archive = [];
-
-// add variant
 const inputs = document.querySelectorAll(".input");
-let cont = 0;
 const variants_list = document.getElementById("variants-list");
+//conteur pour le nombre des variantes.
+let cont = 0;
+// la fonction add variant pour ajouter les variantes
 function add_variant() {
  
   const add_variant = document.getElementById("btn-add-variant");
@@ -130,14 +116,14 @@ function add_variant() {
     // });
     cont++;
   });
-  ;
-}
+};
 add_variant();
+//function remove des variantes
 function remove_var(btn){
-const btne = btn.currentTargett;
+const btne = btn.currentTarget;
  console.log(btn.closest(".variant-row"));
-   btn.parentElement.remove();
-} 
+btn.parentElement.remove();
+};
 
 
 
@@ -146,6 +132,7 @@ const btne = btn.currentTargett;
 
 
 
+const total_event = document.getElementById("stat-total-events");
 
 
 
