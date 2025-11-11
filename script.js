@@ -33,10 +33,12 @@ function appli(key) {
   if(index == 0){
     page_title.innerText="Statistics";
     page_subtitle.innerText="Overview of your events";
+    
   }
   if(index == 2){
     page_title.innerText="Liste des evenements";
     page_subtitle.innerText="Overview of your events";
+
   }
   if(index == 3){
     page_title.innerText="Corbaille";
@@ -238,13 +240,7 @@ function affichage(id, title, seats, price, badge) {
 // detail[1].addEventListener("click", (e)=>{
 // event_modal.classList.remove("is-hidden");
 // })
-
-
-
-
-
-
-
+//fonction calcule du total de seats et prix total
 function renderStats(seats, price) {
 
     const totalEvents = events.length;
@@ -255,16 +251,13 @@ function renderStats(seats, price) {
     document.getElementById('stat-total-seats').textContent = totalSeats;
     document.getElementById('stat-total-price').textContent = '$' + totalPrice.toFixed(2);
 }
-
-
-
 // document.querySelectorAll(".action-btn").forEach(btn => {
 //     btn.addEventListener("click", finctions)
 // });
-
+//selection des tableau archive et events
 document.getElementById("events-table").addEventListener("click", handleTableActionClick);
 document.getElementById("archive-table").addEventListener("click", handleTableActionClick);
-
+//fonction de la determination des fonction a faire
 function handleTableActionClick(e) {
     const button = e.target.closest("[data-action]");
   if(!button){
@@ -304,120 +297,103 @@ function showDetails(eventId) {
         <p><span class="modal__title">price:</span> ${event.price}</p>
 
     `;
-    document.getElementById("event-modal").classList.remove("is-hidden");
+     document.getElementById("event-modal").classList.remove("is-hidden");
+    const close = document.querySelector(".modal__close");
+    close.addEventListener("click", ()=>{
+       document.getElementById("event-modal").classList.add("is-hidden");
+    })
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-let editingEventId = 0;
+let edit_id = 0;
 
 function editEvent(eventId) {
     const event = events.find(ev => ev.id === eventId);
     if (!event) {
-        alert("Event not found");
         return;
     }
-
-    
     event_title.value = event.name;
     event_image.value = event.img;
     event_description.value = event.description;
     event_seats.value = event.seats;
     event_price.value = event.price;
-
-    
     switch_creens(1);
     document.getElementById("submit_btn").innerText = "Update Event";
-
-  
-    editingEventId = eventId;
+    edit_id = eventId;
+  const row = document.querySelector(`[data-event-id="${eventId}"]`);
+  row.remove();
+  validation_of_form_edit(edit_id);
 }
 
-validation_of_form_edit();
-function validation_of_form_edit() {
-    formulaire.addEventListener("submit", (e) => {
-        e.preventDefault();
 
+function validation_of_form_edit(edit_id) {
+    formulaire.addEventListener("submit", (e) => {
+      console.log(edit_id)
+        e.preventDefault();
         let valide = true;
         const event_image_regex = /https?:\/\/(?:www\.)?[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+?\.(?:png|jpe?g|gif|webp|svg|)(?:\?.*)?/;
         const event_title_regex = /^[A-Za-z0-9À-ÿ ,.'!?-]{3,50}$/;
         const event_description_regex = /^[A-Za-z0-9À-ÿ ,.'!?()\n\r-]{10,500}$/;
 
-        const form_errors = document.getElementById("form-errors");
-        const form_success = document.getElementById("form-success");
-        const form_infos = document.getElementById("form-infos");
+        // const form_errors = document.getElementById("form-errors");
+        // const form_success = document.getElementById("form-success");
+        // const form_infos = document.getElementById("form-infos");
 
         for (const input of inputs_4) {
             if (input.value.trim() === "") {
                 valide = false;
                 input.value = "";
-                // form_infos.classList.remove("is-hidden");
+                //  form_infos.classList.remove("is-hidden");
             }
         }
-
-        if (!event_image_regex.test(event_image.value) ||
-            !event_title_regex.test(event_title.value) ||
-            !event_description_regex.test(event_description.value)) {
+        if (!event_image_regex.test(event_image.value) || !event_title_regex.test(event_title.value) || !event_description_regex.test(event_description.value)) {
             valide = false;
         }
-
         if (!valide) {
             // form_errors.classList.remove("is-hidden");
             return;
         }
-
-        
-        form_errors.classList.add("is-hidden");
-        form_infos.classList.add("is-hidden");
+        // form_errors.classList.add("is-hidden");
+        // form_infos.classList.add("is-hidden");
         // form_success.classList.remove("is-hidden");
+        
+        // add event to the events list 
+            // filter arrays from the event === id
+           // creat new event zith new datta
+         //[..event.filter, event_seats]
 
-        if (editingEventId !== 0) {
-            
-            const event = events.find(ev => ev.id === editingEventId);
-            event.name = event_title.value;
-            event.img = event_image.value;
-            event.description = event_description.value;
-            event.seats = parseInt(event_seats.value);
-            event.price = parseInt(event_price.value);
 
-            
-            const row = document.querySelector(`[data-event-id="${editingEventId}"]`);
+
+            // const event = events.find(ev => ev.id === edit_id);
+            // event.name = event_title.value;
+            // event.img = event_image.value;
+            // event.description = event_description.value;
+            // event.seats = parseInt(event_seats.value);
+            // event.price = parseInt(event_price.value);
+
+            console.log(edit_id);
+            const event = events.find(ev => ev.id === edit_id);
+            const row = document.querySelector(`[data-event-id=${edit_id}]`);
             row.innerHTML = `
-                <td>${editingEventId}</td>
+                <td>${edit_id}</td>
                 <td>${event.name}</td>
                 <td>${event.seats}</td>
                 <td>${event.price}$</td>
                 <td><span class="badge">${cont}</span></td>
                 <td>
-                    <button class="btn btn--small" data-action="details" data-event-id="${editingEventId}">Details</button>
-                    <button class="btn btn--small" data-action="edit" data-event-id="${editingEventId}">Edit</button>
-                    <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${editingEventId}">Delete</button>
+                    <button class="btn btn--small" data-action="details" data-event-id="${edit_id}">Details</button>
+                    <button class="btn btn--small" data-action="edit" data-event-id="${edit_id}">Edit</button>
+                    <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${edit_id}">Delete</button>
                 </td>
             `;
 
-            editingEventId = 0;
+            edit_id = 0;
             document.getElementById("submit_btn").innerText = "Create Event";
-        } 
-        else {
-          
-            conteur++;
-            total_event.innerText = conteur;
-            affichage(conteur, event_title.value, event_seats.value, event_price.value, cont);
-        }
-
+            switch_creens(0);
+        
         variants_list.innerHTML = "";
         formulaire.reset();
-        renderStats();
+        handleTableActionClick();
+        
+        
     });
 }
 
@@ -427,15 +403,13 @@ let archive_id = 0;
 function   archiveEvent(eventId){
   const event = events.find(ev => ev.id===eventId);
   if(!event){
-    alert("this is not correct");
     return;
   }          
   archive.push(event);
-  const row = document.querySelector('[data-event-id="${eventId}"]');
+  const row = document.querySelector(`[data-event-id="${eventId}"]`);
   row.remove();
   renderArchiveTable();
 }
-
 
 function renderArchiveTable() {
 event_rows[1].innerHTML = "";
