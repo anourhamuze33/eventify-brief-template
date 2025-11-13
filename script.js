@@ -52,7 +52,7 @@ navigation_btns.forEach((btn) => {
     appli(btn.dataset.screen);
   });
 });
-//une autre ,ethode pour ajouter un variant have to be fixed
+//une autre methode pour ajouter un variant have to be fixed
 
 // add variant
 // const inputs = document.querySelectorAll(".input");
@@ -97,7 +97,6 @@ let cont = 0;
 function add_variant() {
  
   const add_variant = document.getElementById("btn-add-variant");
-
   add_variant.addEventListener("click", (e) => {
   
     variants_list.innerHTML += `     <div class="variant-row">
@@ -123,7 +122,7 @@ add_variant();
 //function remove des variantes
 function remove_var(btn){
 const btne = btn.currentTarget;
- console.log(btn.closest(".variant-row"));
+//  console.log(btn.closest(".variant-row"));
 btn.parentElement.remove();
 };
 
@@ -181,43 +180,37 @@ function validation_of_form(){
       form_infos.classList.add("is-hidden");
       form_success.classList.remove("is-hidden");
       total_event.innerText = conteur;
-      affichage(conteur, event_title.value, event_seats.value, event_price.value, cont);                                                                        // 0
-      variants_list.innerHTML = "";
-
-      setTimeout(()=>{
-        form_success.classList.add("is-hidden");
-      },5000);
-    }
-  });
-}
-//call function of validation
-validation_of_form();
-
-
-
-
- const event_rows = document.querySelectorAll(".table__body");
-
-function affichage(id, title, seats, price, badge) {
- //table_id
-  const event_info = document.createElement("tr");
- 
-
-  event_info.classList.add("table__row");
-  event_info.setAttribute("data-event-id", id);
-  // event_info.dataset.eventId = id;
-  //instead of - ze turn it to uppercase!!!!!!!!!!!!!!
-
-      const event_infos = {
-    id,
+    
+    const event_infos = {
+    id: conteur,
     name: event_title.value,
     seats: parseInt(event_seats.value),
     price: parseInt(event_price.value),
     img: event_image.value,
     description: event_description.value
   }
-   console.log(event_infos);
-   events.push(event_infos);
+  events.push(event_infos);
+      affichage(event_infos.id, event_infos.name, event_infos.seats, event_infos.price, cont);                                                                        // 0
+      variants_list.innerHTML = "";
+
+      setTimeout(()=>{
+        form_success.classList.add("is-hidden");
+      },2000);
+    }
+    
+  });
+}
+//call function of validation
+validation_of_form();
+//selection de tableau d'affichage
+const event_rows = document.querySelectorAll(".table__body");
+function affichage(id, title, seats, price, badge) {
+ //table_id
+  const event_info = document.createElement("tr");
+  event_info.classList.add("table__row");
+  event_info.setAttribute("data-event-id", id);
+  // event_info.dataset.eventId = id;
+  //instead of - we turn it to uppercase!!!!!!!!!!!!!!
   event_info.innerHTML = `
     <td>${id}</td>
     <td>${title}</td>
@@ -233,20 +226,17 @@ function affichage(id, title, seats, price, badge) {
   event_rows[0].appendChild(event_info);
   formulaire.reset();
    renderStats(seats, price);
-
 }
-
+let test = null;
  const total_event = document.getElementById("stat-total-events");
 // detail[1].addEventListener("click", (e)=>{
 // event_modal.classList.remove("is-hidden");
 // })
 //fonction calcule du total de seats et prix total
 function renderStats(seats, price) {
-
     const totalEvents = events.length;
     const totalSeats = events.reduce((sum, e) => sum + e.seats, 0);
     const totalPrice = events.reduce((sum, e) => sum + e.price * e.seats, 0);
-    
     document.getElementById('stat-total-events').textContent = totalEvents;
     document.getElementById('stat-total-seats').textContent = totalSeats;
     document.getElementById('stat-total-price').textContent = '$' + totalPrice.toFixed(2);
@@ -257,6 +247,19 @@ function renderStats(seats, price) {
 //selection des tableau archive et events
 document.getElementById("events-table").addEventListener("click", handleTableActionClick);
 document.getElementById("archive-table").addEventListener("click", handleTableActionClick);
+function find_event (eventid){
+let eventID= null;
+events.forEach(event_inf=>{
+  if(event_inf.id===eventid){
+   eventID = event_inf;
+  }
+  if (!eventID) {
+    alert("event not found");
+  return;
+  }
+})
+  return eventID;
+}
 //fonction de la determination des fonction a faire
 function handleTableActionClick(e) {
     const button = e.target.closest("[data-action]");
@@ -265,36 +268,44 @@ function handleTableActionClick(e) {
   }
   const action = button.dataset.action;
   const eventid = Number(button.dataset.eventId);
-  
+  test = eventid;
 switch(action){
-  case "details" :
-    showDetails(eventid);
+  case "details" :    
+    showDetails();
+    renderStats();
   break;
   case "edit" :
-    editEvent(eventid);
+    editEvent();
+    renderStats();
   break;
   case "archive" :
-    archiveEvent(eventid);
+    archiveEvent(test);
+    renderStats();
   break;
   case "restore":
-  restoreEvent(eventid);
+    restoreEvent(test);
+    renderStats();
   break;
 };
 }
 
-function showDetails(eventId) {
-        const event = events.find(ev => ev.id === eventId);
-        if (!event) {
-        alert("event not found");
-        return;
-    }
+
+
+
+
+
+
+
+
+function showDetails() {
+    let event_find = find_event(test);
     const modal_body = document.getElementById("modal-body");
     modal_body.innerHTML = `
-        <h2>${event.name}</h2>
-        <img src="${event.img}" alt="${event.name}" style = border-radius:10px">
-        <p><span class="modal__title">description:</span> ${event.description}</p>
-        <p><span class="modal__title">seats:</span> ${event.seats}</p>
-        <p><span class="modal__title">price:</span> ${event.price}</p>
+        <h2>${event_find.name}</h2>
+        <img src="${event_find.img}" alt="${event_find.name}" style = border-radius:10px">
+        <p><span class="modal__title">description:</span> ${event_find.description}</p>
+        <p><span class="modal__title">seats:</span> ${event_find.seats}</p>
+        <p><span class="modal__title">price:</span> ${event_find.price}</p>
 
     `;
      document.getElementById("event-modal").classList.remove("is-hidden");
@@ -305,154 +316,144 @@ function showDetails(eventId) {
 };
 let edit_id = 0;
 
-function editEvent(eventId) {
-    const event = events.find(ev => ev.id === eventId);
-    if (!event) {
-        return;
-    }
-    event_title.value = event.name;
-    event_image.value = event.img;
-    event_description.value = event.description;
-    event_seats.value = event.seats;
-    event_price.value = event.price;
-    switch_creens(1);
-    document.getElementById("submit_btn").innerText = "Update Event";
-    edit_id = eventId;
-  const row = document.querySelector(`[data-event-id="${eventId}"]`);
-  row.remove();
-  validation_of_form_edit(edit_id);
-}
+// function editEvent(eventId) {
+//     const event = events.find(ev => ev.id === eventId);
+//     if (!event) {
+//         return;
+//     }
+//     event_title.value = event.name;
+//     event_image.value = event.img;
+//     event_description.value = event.description;
+//     event_seats.value = event.seats;
+//     event_price.value = event.price;
+//     switch_creens(1);
+//     document.getElementById("submit_btn").innerText = "Update Event";
+//     edit_id = eventId;
+//     validation_of_form_edit(edit_id);
+// }
 
 
-function validation_of_form_edit(edit_id) {
-    formulaire.addEventListener("submit", (e) => {
-      console.log(edit_id)
-        e.preventDefault();
-        let valide = true;
-        const event_image_regex = /https?:\/\/(?:www\.)?[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+?\.(?:png|jpe?g|gif|webp|svg|)(?:\?.*)?/;
-        const event_title_regex = /^[A-Za-z0-9À-ÿ ,.'!?-]{3,50}$/;
-        const event_description_regex = /^[A-Za-z0-9À-ÿ ,.'!?()\n\r-]{10,500}$/;
+// function validation_of_form_edit(edit_id) {
+// const formulaire_edit = document.querySelector(".form");
+//     formulaire.addEventListener("submit", (e) => {
+//         e.preventDefault();
+//         let valide = true;
+//         const event_image_regex = /https?:\/\/(?:www\.)?[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+?\.(?:png|jpe?g|gif|webp|svg|)(?:\?.*)?/;
+//         const event_title_regex = /^[A-Za-z0-9À-ÿ ,.'!?-]{3,50}$/;
+//         const event_description_regex = /^[A-Za-z0-9À-ÿ ,.'!?()\n\r-]{10,500}$/;
 
-        // const form_errors = document.getElementById("form-errors");
-        // const form_success = document.getElementById("form-success");
-        // const form_infos = document.getElementById("form-infos");
+//         // const form_errors = document.getElementById("form-errors");
+//         // const form_success = document.getElementById("form-success");
+//         // const form_infos = document.getElementById("form-infos");
 
-        for (const input of inputs_4) {
-            if (input.value.trim() === "") {
-                valide = false;
-                input.value = "";
-                //  form_infos.classList.remove("is-hidden");
-            }
-        }
-        if (!event_image_regex.test(event_image.value) || !event_title_regex.test(event_title.value) || !event_description_regex.test(event_description.value)) {
-            valide = false;
-        }
-        if (!valide) {
-            // form_errors.classList.remove("is-hidden");
-            return;
-        }
-        // form_errors.classList.add("is-hidden");
-        // form_infos.classList.add("is-hidden");
-        // form_success.classList.remove("is-hidden");
+//         for (const input of inputs_4) {
+//             if (input.value.trim() === "") {
+//                 valide = false;
+//                 input.value = "";
+//                 //  form_infos.classList.remove("is-hidden");
+//             }
+//         }
+//         if (!event_image_regex.test(event_image.value) || !event_title_regex.test(event_title.value) || !event_description_regex.test(event_description.value)) {
+//             valide = false;
+//         }
+//         if (!valide) {
+//             // form_errors.classList.remove("is-hidden");
+//             return;
+//         }
+//         // form_errors.classList.add("is-hidden");
+//         // form_infos.classList.add("is-hidden");
+//         // form_success.classList.remove("is-hidden");
+//         console.log(edit_id);
         
-        // add event to the events list 
-            // filter arrays from the event === id
-           // creat new event zith new datta
-         //[..event.filter, event_seats]
+//         // add event to the events list 
+//             // filter arrays from the event === id
+//            // creat new event zith new datta
+//          //[..event.filter, event_seats]
 
 
+//             alert("hgfdsdfghjkl")
+//             const event = events.find(ev => ev.id === edit_id);
+//             event.name = event_title.value;
+//             event.img = event_image.value;
+//             event.description = event_description.value;
+//             event.seats = parseInt(event_seats.value);
+//             event.price = parseInt(event_price.value);
 
-            // const event = events.find(ev => ev.id === edit_id);
-            // event.name = event_title.value;
-            // event.img = event_image.value;
-            // event.description = event_description.value;
-            // event.seats = parseInt(event_seats.value);
-            // event.price = parseInt(event_price.value);
+//             console.log(edit_id);
+            
+//             const row = document.querySelector(`[data-event-id=${edit_id}]`);
+//             row.innerHTML = `
+//                 <td>${edit_id}</td>
+//                 <td>${event.name}</td>
+//                 <td>${event.seats}</td>
+//                 <td>${event.price}$</td>
+//                 <td><span class="badge">${cont}</span></td>
+//                 <td>
+//                     <button class="btn btn--small" data-action="details" data-event-id="${edit_id}">Details</button>
+//                     <button class="btn btn--small" data-action="edit" data-event-id="${edit_id}">Edit</button>
+//                     <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${edit_id}">Delete</button>
+//                 </td>
+//             `;
 
-            console.log(edit_id);
-            const event = events.find(ev => ev.id === edit_id);
-            const row = document.querySelector(`[data-event-id=${edit_id}]`);
-            row.innerHTML = `
-                <td>${edit_id}</td>
-                <td>${event.name}</td>
-                <td>${event.seats}</td>
-                <td>${event.price}$</td>
-                <td><span class="badge">${cont}</span></td>
-                <td>
-                    <button class="btn btn--small" data-action="details" data-event-id="${edit_id}">Details</button>
-                    <button class="btn btn--small" data-action="edit" data-event-id="${edit_id}">Edit</button>
-                    <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${edit_id}">Delete</button>
-                </td>
-            `;
-
-            edit_id = 0;
-            document.getElementById("submit_btn").innerText = "Create Event";
-            switch_creens(0);
+//             edit_id = 0;
+//             document.getElementById("submit_btn").innerText = "Create Event";
+//             switch_creens(0);
         
-        variants_list.innerHTML = "";
-        formulaire.reset();
-        handleTableActionClick();
+//         variants_list.innerHTML = "";
+//         formulaire.reset();
+//         handleTableActionClick();
         
-        
-    });
-}
+//     });
+// }
 
 
 
-let archive_id = 0;
-function   archiveEvent(eventId){
-  const event = events.find(ev => ev.id===eventId);
-  if(!event){
-    return;
-  }          
-  archive.push(event);
-  const row = document.querySelector(`[data-event-id="${eventId}"]`);
-  row.remove();
-  renderArchiveTable();
-}
+// let archive_id = 0;
+// function archiveEvent(eventId){
+// let event_find = find_event(test);  
+//   archive.push(event_find);
+//   const row = document.querySelector(`[data-event-id="${eventId}"]`);
+//   row.remove();
+//   events.splice(test-1, 1);
+//   conteur=0;
+//   renderArchiveTable();
+// }
 
-function renderArchiveTable() {
-event_rows[1].innerHTML = "";
-  archive.forEach(ev => {
-    const event_info = document.createElement("tr");
-    event_info.classList.add("table__row");
-    event_info.setAttribute("data-event-id", ev.id);
-
-    event_info.innerHTML = `
-      <td>${ev.id}</td>
-      <td>${ev.name}</td>
-      <td>${ev.seats}</td>
-      <td>${ev.price}$</td>
-      <td><span class="badge">archived</span></td>
-      <td>
-          <button class="btn btn--small" data-action="details" data-event-id="${ev.id}">Details</button>
-          <button class="btn btn--primary btn--small" data-action="restore" data-event-id="${ev.id}">Restore</button>
-      </td>
-    `;
-    event_rows[1].appendChild(event_info);
-  });
-}
+// function renderArchiveTable() {
+//   let event_find = find_event(test);
+//   archive.forEach(ev => {
+//     archive_id++;
+//     const event_info = document.createElement("tr");
+//     event_info.classList.add("table__row");
+//     event_info.setAttribute("data-event-id", ev.id);
+//     event_info.innerHTML = `
+//       <td>${ev.id}</td>
+//       <td>${ev.name}</td>
+//       <td>${ev.seats}</td>
+//       <td>${ev.price}$</td>
+//       <td><span class="badge">archived</span></td>
+//       <td>
+//           <button class="btn btn--small" data-action="details" data-event-id="${ev.id}">Details</button>
+//           <button class="btn btn--primary btn--small" data-action="restore" data-event-id="${ev.id}">Restore</button>
+//       </td>
+//     `;
+//     event_rows[1].appendChild(event_info);
+//   });
+// }
 
 
 
 
 
-function restoreEvent(eventId) {
-  const event = archive.find(ev => ev.id === eventId);
-  if (!event) {
-    alert("event not found");
-    return;
-  }
-  events.push(event);
-  const row = document.querySelector('[data-event-id="${eventId}"]');
-  row.remove();
-
-  affichage(event.id, event.name, event.seats, event.price, 0);
-  
-
-  renderStats();
-}
-
-
-
-
+// function restoreEvent(eventId) {
+//   const event = archive.find(ev => ev.id === eventId);
+//   if (!event) {
+//     return;
+//   }
+//   events.push(event);
+//   const row = document.querySelector(`[data-event-id="${eventId}"]`);
+//   row.remove();
+//   archive.splice(eventId-1, 1);
+//   affichage(event.id, event.name, event.seats, event.price, 0);
+//   renderStats();
+// }
