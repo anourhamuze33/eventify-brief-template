@@ -95,7 +95,6 @@ const variants_list = document.getElementById("variants-list");
 let cont = 0;
 // la fonction add variant pour ajouter les variantes
 function add_variant() {
- 
   const add_variant = document.getElementById("btn-add-variant");
   add_variant.addEventListener("click", (e) => {
   
@@ -137,9 +136,11 @@ let event_seats = document.querySelector("#event-seats");
 let event_price = document.querySelector("#event-price");
 //conteur por les id des evenements
 let conteur = 0;
+
 // la fonction validation du formulaire
-function validation_of_form(){
   formulaire.addEventListener("submit", (e) => {
+    form_validation();
+function form_validation (){
     e.preventDefault();
     // variable poure la sortie du fonction si l'input est inconvenable.
     let valide = true;
@@ -153,7 +154,7 @@ function validation_of_form(){
     const form_success = document.getElementById("form-success");
     const form_infos = document.getElementById("form-infos");
     //ensure that the input isn't empty
-    for (input of inputs_4){
+    for (const input of inputs_4){
       if (input.value.trim() == "") {
         valide = false;
         input.value = "";
@@ -175,6 +176,7 @@ function validation_of_form(){
     }
     //info validate=false if will work and calll affichage function.
     if (valide) {
+      alert("jhgfdsdfghjkjhgfdsdfghjkhgfd")
       conteur++;
       form_errors.classList.add("is-hidden");
       form_infos.classList.add("is-hidden");
@@ -190,45 +192,45 @@ function validation_of_form(){
     description: event_description.value
   }
   events.push(event_infos);
-      affichage(event_infos.id, event_infos.name, event_infos.seats, event_infos.price, cont);                                                                        // 0
+      event_rows[0].innerHTML="";                                                                      // 0
       variants_list.innerHTML = "";
-
       setTimeout(()=>{
         form_success.classList.add("is-hidden");
       },2000);
+      render_events();
     }
-    
+    }
   });
-}
-//call function of validation
-validation_of_form();
+
+
 //selection de tableau d'affichage
 const event_rows = document.querySelectorAll(".table__body");
-function affichage(id, title, seats, price, badge) {
- //table_id
+//fonction render events
+function render_events(){
+  events.forEach(ev=>{
   const event_info = document.createElement("tr");
   event_info.classList.add("table__row");
-  event_info.setAttribute("data-event-id", id);
-  // event_info.dataset.eventId = id;
-  //instead of - we turn it to uppercase!!!!!!!!!!!!!!
+  event_info.setAttribute("data-event-id", ev.id);
   event_info.innerHTML = `
-    <td>${id}</td>
-    <td>${title}</td>
-    <td>${seats}</td>
-    <td>${price}$</td>
-    <td><span class="badge">${badge}</span></td>
+    <td>${ev.id}</td>
+    <td>${ev.name}</td>
+    <td>${ev.seats}</td>
+    <td>${ev.price}$</td>
+    <td><span class="badge">8</span></td>
     <td>
-        <button class="btn btn--small" data-action="details" data-event-id="${id}">Details</button>
-        <button class="btn btn--small" data-action="edit" data-event-id="${id}">Edit</button>
-        <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${id}">Delete</button>
+        <button class="btn btn--small" data-action="details" data-event-id="${ev.id}">Details</button>
+        <button class="btn btn--small" data-action="edit" data-event-id="${ev.id}">Edit</button>
+        <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${ev.archiveEventid}">Delete</button>
     </td>
 `;
   event_rows[0].appendChild(event_info);
-  formulaire.reset();
-   renderStats(seats, price);
+    formulaire.reset();
+   renderStats();
+  })
 }
+//variable pour stocker l'id
 let test = null;
- const total_event = document.getElementById("stat-total-events");
+const total_event = document.getElementById("stat-total-events");
 // detail[1].addEventListener("click", (e)=>{
 // event_modal.classList.remove("is-hidden");
 // })
@@ -275,7 +277,7 @@ switch(action){
     renderStats();
   break;
   case "edit" :
-    editEvent();
+    editEvent(test);
     renderStats();
   break;
   case "archive" :
@@ -288,14 +290,6 @@ switch(action){
   break;
 };
 }
-
-
-
-
-
-
-
-
 
 function showDetails() {
     let event_find = find_event(test);
@@ -315,96 +309,72 @@ function showDetails() {
     })
 };
 let edit_id = 0;
+function editEvent(eventId) {
+let event_find = find_event(test);
+    event_title.value = event_find.name;
+    event_image.value = event_find.img;
+    event_description.value = event_find.description;
+    event_seats.value = event_find.seats;
+    event_price.value = event_find.price;
+    switch_creens(1);
+    document.getElementById("submit_btn").innerText = "Update Event";
+    edit_id = eventId;
+ let valid = true;
+    formulaire.addEventListener("submit", (e) => {
+        e.preventDefault();
+        let tesst=edit_id;
+        const event_image_regex = /https?:\/\/(?:www\.)?[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+?\.(?:png|jpe?g|gif|webp|svg|)(?:\?.*)?/;
+        const event_title_regex = /^[A-Za-z0-9À-ÿ ,.'!?-]{3,50}$/;
+        const event_description_regex = /^[A-Za-z0-9À-ÿ ,.'!?()\n\r-]{10,500}$/;
 
-// function editEvent(eventId) {
-//     const event = events.find(ev => ev.id === eventId);
-//     if (!event) {
-//         return;
-//     }
-//     event_title.value = event.name;
-//     event_image.value = event.img;
-//     event_description.value = event.description;
-//     event_seats.value = event.seats;
-//     event_price.value = event.price;
-//     switch_creens(1);
-//     document.getElementById("submit_btn").innerText = "Update Event";
-//     edit_id = eventId;
-//     validation_of_form_edit(edit_id);
-// }
+        // const form_errors = document.getElementById("form-errors");
+        // const form_success = document.getElementById("form-success");
+        // const form_infos = document.getElementById("form-infos");
+
+        for ( const input of inputs_4) {
+            if (input.value.trim() === "") {
+              console.log("step 1")
+                valid = false;
+                input.value = "";
+                //  form_infos.classList.remove("is-hidden");
+            }
+        }
+        if (!event_image_regex.test(event_image.value) || !event_title_regex.test(event_title.value) || !event_description_regex.test(event_description.value)) {
+            valid = false;
+                          console.log("step 3")
+
+        }
+        if (!valid) {
+                        console.log("step FALSE")
+
+            // form_errors.classList.remove("is-hidden");
+            return;
+        }
+        // form_errors.classList.add("is-hidden");
+        // form_infos.classList.add("is-hidden");
+        // form_success.classList.remove("is-hidden");
+if(valid){
+  alert("lkjhgfdfghjk")
+    event_find.id= tesst,
+    event_find.name= event_title.value,
+    event_find.seats= parseInt(event_seats.value),
+    event_find.price= parseInt(event_price.value),
+    event_find.img= event_image.value,
+    event_find.description= event_description.value
+            edit_id = 0;
+            document.getElementById("submit_btn").innerText = "Create Event";
+            switch_creens(0);
+            variants_list.innerHTML = "";
+            formulaire.reset();
+}     
+    });
+
+}
 
 
-// function validation_of_form_edit(edit_id) {
-// const formulaire_edit = document.querySelector(".form");
-//     formulaire.addEventListener("submit", (e) => {
-//         e.preventDefault();
-//         let valide = true;
-//         const event_image_regex = /https?:\/\/(?:www\.)?[a-zA-Z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+?\.(?:png|jpe?g|gif|webp|svg|)(?:\?.*)?/;
-//         const event_title_regex = /^[A-Za-z0-9À-ÿ ,.'!?-]{3,50}$/;
-//         const event_description_regex = /^[A-Za-z0-9À-ÿ ,.'!?()\n\r-]{10,500}$/;
 
-//         // const form_errors = document.getElementById("form-errors");
-//         // const form_success = document.getElementById("form-success");
-//         // const form_infos = document.getElementById("form-infos");
+  
 
-//         for (const input of inputs_4) {
-//             if (input.value.trim() === "") {
-//                 valide = false;
-//                 input.value = "";
-//                 //  form_infos.classList.remove("is-hidden");
-//             }
-//         }
-//         if (!event_image_regex.test(event_image.value) || !event_title_regex.test(event_title.value) || !event_description_regex.test(event_description.value)) {
-//             valide = false;
-//         }
-//         if (!valide) {
-//             // form_errors.classList.remove("is-hidden");
-//             return;
-//         }
-//         // form_errors.classList.add("is-hidden");
-//         // form_infos.classList.add("is-hidden");
-//         // form_success.classList.remove("is-hidden");
-//         console.log(edit_id);
-        
-//         // add event to the events list 
-//             // filter arrays from the event === id
-//            // creat new event zith new datta
-//          //[..event.filter, event_seats]
-
-
-//             alert("hgfdsdfghjkl")
-//             const event = events.find(ev => ev.id === edit_id);
-//             event.name = event_title.value;
-//             event.img = event_image.value;
-//             event.description = event_description.value;
-//             event.seats = parseInt(event_seats.value);
-//             event.price = parseInt(event_price.value);
-
-//             console.log(edit_id);
-            
-//             const row = document.querySelector(`[data-event-id=${edit_id}]`);
-//             row.innerHTML = `
-//                 <td>${edit_id}</td>
-//                 <td>${event.name}</td>
-//                 <td>${event.seats}</td>
-//                 <td>${event.price}$</td>
-//                 <td><span class="badge">${cont}</span></td>
-//                 <td>
-//                     <button class="btn btn--small" data-action="details" data-event-id="${edit_id}">Details</button>
-//                     <button class="btn btn--small" data-action="edit" data-event-id="${edit_id}">Edit</button>
-//                     <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${edit_id}">Delete</button>
-//                 </td>
-//             `;
-
-//             edit_id = 0;
-//             document.getElementById("submit_btn").innerText = "Create Event";
-//             switch_creens(0);
-        
-//         variants_list.innerHTML = "";
-//         formulaire.reset();
-//         handleTableActionClick();
-        
-//     });
-// }
 
 
 
@@ -418,6 +388,7 @@ let edit_id = 0;
 //   conteur=0;
 //   renderArchiveTable();
 // }
+
 
 // function renderArchiveTable() {
 //   let event_find = find_event(test);
@@ -457,3 +428,32 @@ let edit_id = 0;
 //   affichage(event.id, event.name, event.seats, event.price, 0);
 //   renderStats();
 // }
+
+//fonction recherche 
+const search_input = document.getElementById("search-events");
+search_input.addEventListener("input", (e)=>{
+  const search_text = search_input.value.toLowerCase().trim();
+  const search_result = events.filter(event=> event.name.toLowerCase().includes(search_text))
+  affichage_event_searched(search_result);
+})
+function affichage_event_searched(event_searched){
+event_rows[0].innerHTML="";
+  event_searched.forEach(e => {
+    const row = document.createElement("tr");
+    row.classList.add("table__row");
+    row.setAttribute("data-event-id", e.id);
+    row.innerHTML = `
+      <td>${e.id}</td>
+      <td>${e.name}</td>
+      <td>${e.seats}</td>
+      <td>${e.price}$</td>
+      <td><span class="badge">8</span></td>
+      <td>
+        <button class="btn btn--small" data-action="details" data-event-id="${e.id}">Details</button>
+        <button class="btn btn--small" data-action="edit" data-event-id="${e.id}">Edit</button>
+        <button class="btn btn--danger btn--small" data-action="archive" data-event-id="${e.id}">Delete</button>
+      </td>
+    `;
+    event_rows[0].appendChild(row);
+});
+}
