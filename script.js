@@ -1,4 +1,4 @@
-//les array qui contient les evenements et les archives
+       //les array qui contient les evenements et les archives
 let events = [];
 let archive = [];
 // variables: selection of screens, bottons, page title and subtitle.
